@@ -1,9 +1,41 @@
 import express, { Request, Response } from 'express';
 import jwt from "jsonwebtoken";
 import { userMiddleware } from './middleware/auth';
+import cors from "cors";
+import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
+import { auth } from './utils/auth';
 
 const app = express();
+
+app.use(
+    cors({
+      origin: "http://localhost:3000", // Replace with your frontend's origin
+      methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
+      credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    })
+  );
+  
+
+app.all("/api/auth/*splat", toNodeHandler(auth));
+
 app.use(express.json());
+
+
+app.get("/api/me", async (req: Request , res: Response) => { 
+    const session = await auth.api.getSession({ 
+        headers: fromNodeHeaders(req.headers),  
+    })
+
+    if(!session) { 
+        return res.status(401).json({ 
+            error: "Unauthorized"
+        });
+    }
+    
+    return res.json({ 
+        user:session.user
+    })
+})
 
 const JWT_SECRET = 'secrect';
 
@@ -118,4 +150,4 @@ app.get("/allUser" , userMiddleware , (req: Request , res:Response) => {
 
 })
 
-app.listen(3000);
+app.listen(3005);

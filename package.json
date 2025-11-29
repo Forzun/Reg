@@ -5,21 +5,32 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "dev": "bun run --watch src/index.ts",
-    "start": "bun run dist/index.js",
-    "start:dev": "build && run src/index.ts"
+    "dev": "bun run --watch src/server.ts",
+    "start": "bun run dist/server.js",
+    "start:dev": "build && run src/server.ts",
+    "prisma:generate": "bunx --bun prisma generate",
+    "prisma:migrate": "bunx --bun prisma migrate dev --name init"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/jsonwebtoken": "^9.0.10"
+    "@types/cors": "^2.8.19",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/pg": "^8.15.6",
+    "prisma": "^7.0.1"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
+    "@prisma/adapter-libsql": "^7.0.1",
+    "@prisma/adapter-pg": "^7.0.1",
+    "@prisma/client": "^7.0.1",
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.1",
+    "better-auth": "^1.4.3",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3"
   }
 }
