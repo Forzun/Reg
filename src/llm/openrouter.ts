@@ -23,12 +23,9 @@ export async function generateChatCompletion({
         headers: {
           Authorization: `Bearer ${OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "yourdomain.com",
-          "X-Title": "Your App Name"
         },
       }
 )
     return response.data
 }
-
 
