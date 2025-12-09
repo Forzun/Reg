@@ -5,6 +5,8 @@ import cors from "cors";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import { auth } from './utils/auth';
 import { summarizeText } from './llm/header';
+import { hashPassword } from './utils/hash-password';
+import { prisma } from './prisma';
 
 const app = express();
 
@@ -50,31 +52,38 @@ interface UserProps {
 
 const user:UserProps[] = [];
 
-app.post("/signup" , (req: Request , res: Response) => { 
-    const {username  , password} = req.body;
+app.post("/signup" , async (req: Request , res: Response) => {  
+    const  { email , password , name } = req.body;
 
-    const existingUser = user.find(user => user.username == username); 
+    const existingUser = await prisma.user.findUnique({ 
+        where:{ 
+            email: email,
+        }
+    })
+
     if(existingUser){ 
-        return res.status(200).json({ 
-            sucess: true, 
-            message:"user name elready exit", 
-            data: existingUser
+        return res.status(409).json({ 
+            result: false, 
+            message: "user in already logined"
         })
     }
 
-    user.push({ 
-        username, 
-        password
-    })
-
-    res.status(200).json({ 
-        sucess: true, 
-        message:"signup sucessfully", 
-        result: { 
-            username, 
-            password
+    console.log(email , password , name)
+    const user = await auth.api.signUpEmail({ 
+        body:{ 
+            email, 
+            password,
+            name,
         }
     })
+    console.log(user)
+
+    if(user){ 
+        res.status(200).json({ 
+            success:true, 
+            message:"Signup sucessfully"
+        })
+    }
 
 })
 
