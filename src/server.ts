@@ -8,7 +8,7 @@ import { summarizeText } from './llm/header';
 
 const app = express();
 
-app.all("/api/auth/*", toNodeHandler(auth));
+app.use("/api/auth", toNodeHandler(auth));
 
 
 app.use(
@@ -157,7 +157,8 @@ app.get("/allUser" , userMiddleware , (req: Request , res:Response) => {
 
 app.post('/api/llm/summarize', async (req: Request , res: Response) => { 
     try{ 
-        const { text } = req.body;
+        const text  = req.body;
+        console.log(text);
         if (!text) {
           return res.status(400).json({ error: "text is required" });
         }
@@ -169,7 +170,8 @@ app.post('/api/llm/summarize', async (req: Request , res: Response) => {
         console.log(error);
         res.status(400).json({
             result: false, 
-            error: error
+            error: error,
+            message:"LLM error"
         })
     }
 })
